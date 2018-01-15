@@ -21,7 +21,7 @@ Simple tools that I used to generate and run a self-driving car model with VPilo
 
 ## Training
 
-The dataset I generated is around 216 gigabytes after running for 15 hours, so I would advise having plenty of space on a hard drive to store data. Also, I training the model on an AWS p2xlarge instance for around 12 hours, during that time I was only able to go through 1 epoch of the data. However, the model still yeilded great results in running and is able to avoid obstacles and stay between road lines most of the time.
+The dataset I generated is around 216 gigabytes after running for 15 hours, so I would advise having plenty of space on a hard drive to store data.
 
 ## Improvements
 
