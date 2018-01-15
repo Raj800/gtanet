@@ -29,3 +29,11 @@ If you would like to contribute I have some ideas on how this model could be imp
 
 - Dataset balancing - Most of the steering values will be around 0, with few around -1 and 1, so balancing the dataset would probably improve performance
 - Better preprocessing
+
+## Refrences
+
+- https://psyber.io/
+- https://github.com/sentdex/pygta5/
+- https://github.com/aitorzip/DeepGTAV
+- https://github.com/aitorzip/VPilot
+- https://github.com/cpgeier/SantosNet
