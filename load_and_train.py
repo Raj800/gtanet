@@ -8,24 +8,25 @@ import h5py
 from preprocessing import load_batches
 
 
-WIDTH = 160
-HEIGHT = 320
+WIDTH = 299
+HEIGHT = 299
 LR = 1e-3
 EPOCHS = 30
 
 MODEL_NAME = 'gtanet.model'
 PREV_MODEL = 'D:/Utilities/Raj/Project/Project/SantosNet-master/gtanet.model'
-LOAD_MODEL = True
+LOAD_MODEL = False
 
 
 print("Loading Model ...")
-model = googlenet(WIDTH, HEIGHT, 3, LR, output=1000)
+model = googlenet(WIDTH, HEIGHT, 3, LR, output=35)
 print("Model Loaded.")
 '''
 if LOAD_MODEL:
     model.load(PREV_MODEL)
     print('We have loaded a previous model!!!!')
 '''
+txtfile = 'data_rgb.txt'
 
 print("Starting Training...")
 batch_count = 0
@@ -34,7 +35,11 @@ batch_count = 0
 for i in range(1, 10):
     count = 0
     print('----------- On Epoch: ' + str(i) + ' ----------')
-    for x_train, y_train, x_test, y_test in load_batches():
+    f = open(txtfile, 'w+')
+    data_dump_no = 1
+    f.write(str(data_dump_no))
+    f.close()
+    for x_train, y_train, x_test, y_test, samples_per_batch, batch_count in load_batches(epoch=i, txtfile=txtfile, samples_per_batch=1000):
         # Model input requires numpy array
         x_train = np.array(x_train)
         x_test = np.array(x_test)

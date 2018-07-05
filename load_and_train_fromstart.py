@@ -19,41 +19,66 @@ from keras.layers import Dense, GlobalAveragePooling2D
 from keras import backend as K
 from models import inception_v3 as googlenet
 from random import shuffle
-from preprocessing import load_from_npy
 
 
 FILE_I_END = 34
-WIDTH = 240
-HEIGHT = 320
+WIDTH = 299
+HEIGHT = 299
 LR = 1e-3
 EPOCHS = 30
 
-MODEL_NAME = 'gtanet.model'
-PREV_MODEL = 'gtanet.model'
+txtfile = 'data_frm_start_rgb.txt'
 
-tensorboard = TensorBoard(log_dir="logs/{}".format(time.time()))
+NAME = 'gtanet_topview_frmstart'
+MODEL_NAME = NAME+'.model'
+PREV_MODEL = NAME+'.model'
 
-LOAD_MODEL = False
+LOAD_MODEL = True
 
-model = googlenet(WIDTH, HEIGHT, 3, LR, output=1000, model_name=MODEL_NAME)
+model = googlenet(WIDTH, HEIGHT, 3, LR, output=35, model_name=MODEL_NAME)
 
 if LOAD_MODEL:
     model.load(PREV_MODEL)
     print('We have loaded a previous model!!!!')
 
-for epoch in range(EPOCHS):
-    data_order = [i for i in range(1, FILE_I_END + 1)]
-    shuffle(data_order)
-    for count, i in enumerate(data_order):
-        try:
-            X, Y, test_x, test_y = load_from_npy(epoch, i, count)
-            model.fit({'input': X}, {'targets': Y}, n_epoch=1,
-                      validation_set=({'input': test_x}, {'targets': test_y}), snapshot_step=2500,
-                      show_metric=True, run_id=MODEL_NAME)
+count = 0
 
-            if count % 5 == 0:
+for epoch in range(EPOCHS):
+    try:
+        for X, Y, test_x, test_y, batch_size, batch_count in load_batches(epoch=epoch,txtfile=txtfile):
+            model.fit({'input': X}, {'targets': Y}, n_epoch=6,
+                  validation_set=({'input': test_x}, {'targets': test_y}), snapshot_step=2500,
+                  show_metric=True, run_id=MODEL_NAME)
+            print('SAVING MODEL!')
+            model.save(MODEL_NAME)
+            print("Saved model to disk")
+            if batch_count % 2 == 0:
                 print('SAVING MODEL!')
                 model.save(MODEL_NAME)
+                print("Saved model to disk")
 
-        except Exception as e:
-            print(str(e))
+            if (batch_count + 1) % 2 == 0:
+                print('SAVING MODEL!')
+                model.save(MODEL_NAME)
+                print("Saved model to disk")
+
+        count += 1
+
+
+    except Exception as e:
+        print(str(e))
+        print('SAVING MODEL!')
+        model.save(MODEL_NAME)
+        if batch_count % 2 == 0:
+            print('SAVING MODEL!')
+            model.save(MODEL_NAME)
+            print("Saved model to disk")
+
+        if (batch_count + 1) % 2 == 0:
+            print('SAVING MODEL!')
+            model.save(MODEL_NAME)
+            print("Saved model to disk")
+    f = open(txtfile, 'w+')
+    data_dump_no = 1
+    f.write(str(data_dump_no))
+    f.close()
